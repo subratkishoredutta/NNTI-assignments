@@ -32,7 +32,7 @@ class Model(nn.Module):
             layers.append(nn.ReLU())
             layers.append(nn.MaxPool2d(kernel_size=2,stride=2))
         layers.append(nn.Flatten())
-        layers.append(nn.Linear(self.channels*int(32/(2**(self.num_layers+1)))**2,350,bias=True))
+        layers.append(nn.Linear(self.channels*int(28/(2**(self.num_layers+1)))**2,350,bias=True))
         layers.append(nn.ReLU())
         layers.append(nn.Linear(350,self.out_dim,bias=True))
         layers.append(nn.Softmax())
@@ -42,8 +42,9 @@ class Model(nn.Module):
         return out
         
 def datagen(split,batch_size):
-    transform_fn = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.7,), (0.7,)),])
-
+    transform_fn = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.7,), (0.7,)),transforms.CenterCrop((29,22)),transforms.Resize((28,28))])#transforms.Normalize((0.7,), (0.7,)),,,
+    print('making your data :/)')
     svhn_train = datasets.SVHN(root='./data', split=split, download=True, transform=transform_fn)
-    train_dl = torch.utils.data.DataLoader(svhn_train, batch_size=batch_size, shuffle=True)
-    return train_dl
+    data_dl = torch.utils.data.DataLoader(svhn_train, batch_size=batch_size, shuffle=False)
+    return data_dl
+
